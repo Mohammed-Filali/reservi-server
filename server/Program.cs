@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using server.Data;
 using server.Models;
 using System.Text;
-using server.Services; // make sure this is the correct namespace for your TokenService
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// DB Context
 builder.Services.AddDbContext<DB_Connect>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DB_Connect")));
 
@@ -22,7 +22,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<DB_Connect>()
     .AddDefaultTokenProviders();
 
-// ✅ JWT Authentication Configuration
+// JWT Authentication Configuration
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -44,21 +44,41 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// ✅ Register your custom TokenService
+// ✅ FIX: CORS → Ne pas utiliser "*" si AllowCredentials est activé
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000") // ✅ Met ton vrai frontend ici
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // ✅ Nécessaire si React utilise withCredentials
+    });
+});
+
+// Register TokenService
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
-// Middleware
+// Enable Swagger only in development
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage(); // (optionnel mais utile)
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Middleware order is important
+app.UseCors("AllowFrontend");
 
-app.UseAuthentication(); // ← Make sure this comes before Authorization
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection(); // ❗️Pas en dev
+}
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

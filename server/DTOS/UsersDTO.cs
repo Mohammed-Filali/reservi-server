@@ -10,7 +10,7 @@
 
         public string Phone { get; set; }
 
-        public string Role_id { get; set; }
+        public string Role { get; set; }
 
     }
 }
