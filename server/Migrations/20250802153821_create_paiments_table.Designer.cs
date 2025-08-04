@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Data;
 
@@ -11,9 +12,11 @@ using server.Data;
 namespace server.Migrations
 {
     [DbContext(typeof(DB_Connect))]
-    partial class DB_ConnectModelSnapshot : ModelSnapshot
+    [Migration("20250802153821_create_paiments_table")]
+    partial class create_paiments_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,53 +158,6 @@ namespace server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("server.Models.AbonnementPaiment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Currency")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProfetionnalId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProfetionnalId1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("created_at")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("updated_at")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfetionnalId1");
-
-                    b.ToTable("abonnementPaiments");
-                });
-
             modelBuilder.Entity("server.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -313,56 +269,6 @@ namespace server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("server.Models.Paiment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Currency")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ReservationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateOnly>("created_at")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("updated_at")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Paiments");
                 });
 
             modelBuilder.Entity("server.Models.Profetionnal", b =>
@@ -480,6 +386,56 @@ namespace server.Migrations
                     b.ToTable("Services");
                 });
 
+            modelBuilder.Entity("server.Models.paiment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Currency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateOnly>("created_at")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("updated_at")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Paiments");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -531,16 +487,6 @@ namespace server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("server.Models.AbonnementPaiment", b =>
-                {
-                    b.HasOne("server.Models.Profetionnal", "Profetionnal")
-                        .WithMany("abonnementPaiments")
-                        .HasForeignKey("ProfetionnalId1")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Profetionnal");
-                });
-
             modelBuilder.Entity("server.Models.Availability", b =>
                 {
                     b.HasOne("server.Models.Profetionnal", "profetionnal")
@@ -550,25 +496,6 @@ namespace server.Migrations
                         .IsRequired();
 
                     b.Navigation("profetionnal");
-                });
-
-            modelBuilder.Entity("server.Models.Paiment", b =>
-                {
-                    b.HasOne("server.Models.Reservation", "Reservation")
-                        .WithOne("Paiment")
-                        .HasForeignKey("server.Models.Paiment", "ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("server.Models.ApplicationUser", "User")
-                        .WithMany("Paiments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reservation");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("server.Models.Profetionnal", b =>
@@ -619,6 +546,25 @@ namespace server.Migrations
                     b.Navigation("Professional");
                 });
 
+            modelBuilder.Entity("server.Models.paiment", b =>
+                {
+                    b.HasOne("server.Models.Reservation", "Reservation")
+                        .WithOne("Paiment")
+                        .HasForeignKey("server.Models.paiment", "ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("server.Models.ApplicationUser", "User")
+                        .WithMany("Paiments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("server.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Paiments");
@@ -638,8 +584,6 @@ namespace server.Migrations
                     b.Navigation("Availabilities");
 
                     b.Navigation("Services");
-
-                    b.Navigation("abonnementPaiments");
                 });
 
             modelBuilder.Entity("server.Models.Reservation", b =>

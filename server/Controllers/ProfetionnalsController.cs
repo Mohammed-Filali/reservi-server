@@ -24,39 +24,90 @@ namespace server.Controllers
             _roleManager = roleManager;
         }
 
-        [HttpPost]
+        [HttpGet]
 
-        [HttpPost("store")]
-        public async Task<IActionResult> Store([FromForm] ProfetionnalDTO profetionnalDTO)
+        public async Task<IActionResult> GetAll()
         {
             try
             {
+                var profetionnals = await _context.Profetionnals
+     .Include(p => p.User)
+     .Include(p => p.Category)
+     .Include(p => p.Services)
+     .Select(p => new ProfetionnalDTO
+     {
+         id = p.Id,
+         Business_name = p.BusinessName,
+         Description = p.Description,
+         address = p.Address,
+         City = p.City,
+         Status = p.Status.ToString(), // convert enum to string if needed
+          Phone = p.Phone,
+          ProfileImage = p.ProfileImage,
+         CategoryName = p.Category != null ? p.Category.Name : null,
+         category_id = p.Category.Id,
+         UserEmail = p.User.Email,
+         UserName = p.User.UserName,
+         UserPhone = p.User.PhoneNumber,
+         TitleService = p.Services.FirstOrDefault() != null ? p.Services.FirstOrDefault().Title : null,
+         ServicePrice = p.Services.FirstOrDefault() != null ? p.Services.FirstOrDefault().Price : 0
+
+
+     })
+     .ToListAsync();
+
+                if (profetionnals == null || !profetionnals.Any())
+                {
+                    return NotFound("No professionals found.");
+                }
+                return Ok(profetionnals);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Internal Server Error",
+                    error = ex.InnerException?.Message ?? ex.Message
+                });
+            }
+        }
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Store([FromForm] fetionnaleCrudDto profetionnalDTO)
+        {
+            try
+            {
+                // 1. Vérifie si l'utilisateur existe
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == profetionnalDTO.user_id);
                 if (user == null)
                     return NotFound("User not found.");
 
+                // 2. Vérifie si la catégorie existe
                 var category = await _context.Categories.FindAsync(profetionnalDTO.category_id);
                 if (category == null)
                     return NotFound("Category not found.");
 
-                // Handle image upload
+                // 3. Gérer l’upload de l’image
                 string? imagePath = null;
-                if (profetionnalDTO.ProfileImage != null && profetionnalDTO.ProfileImage.Length > 0)
+                if (profetionnalDTO.ProfileImage is { Length: > 0 })
                 {
-                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                    Directory.CreateDirectory(uploadsFolder); // Ensure folder exists
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "professionals");
+                    Directory.CreateDirectory(uploadsFolder); // Crée le dossier s’il n’existe pas
 
-                    var uniqueFileName = Guid.NewGuid() + Path.GetExtension(profetionnalDTO.ProfileImage.FileName);
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(profetionnalDTO.ProfileImage.FileName)}";
+                    var fullPath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await profetionnalDTO.ProfileImage.CopyToAsync(fileStream);
-                    }
+                    using var fileStream = new FileStream(fullPath, FileMode.Create);
+                    await profetionnalDTO.ProfileImage.CopyToAsync(fileStream);
 
-                    imagePath = Path.Combine("uploads", uniqueFileName).Replace("\\", "/");
+                    // Stocke le chemin relatif
+                    imagePath = Path.Combine("uploads", "professionals", uniqueFileName).Replace("\\", "/");
                 }
 
+                // 4. Création de l’objet
                 var profetionnal = new Profetionnal
                 {
                     BusinessName = profetionnalDTO.Business_name,
@@ -68,15 +119,21 @@ namespace server.Controllers
                     CategoryId = profetionnalDTO.category_id,
                     ProfileImage = imagePath,
                     Status = ProfetionnalStatus.Active,
-                    User = user,
-                    Category = category,
-                   
                 };
 
                 _context.Profetionnals.Add(profetionnal);
                 await _context.SaveChangesAsync();
 
-                return Ok(profetionnalDTO);
+                return Ok(new
+                {
+                    message = "Professional created successfully",
+                    data = new
+                    {
+                        profetionnal.Id,
+                        profetionnal.BusinessName,
+                        profetionnal.ProfileImage
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -86,7 +143,75 @@ namespace server.Controllers
                     error = ex.InnerException?.Message ?? ex.Message
                 });
             }
+        }
 
+
+
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var profetionnal = await _context.Profetionnals
+                    .Include(p => p.User)
+                    .Include(p => p.Category)
+                    .Include(p => p.Services)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                if (profetionnal == null)
+                {
+                    return NotFound("Professional not found.");
+                }
+                var profetionnalDTO = new ProfetionnalDTO
+                {
+                    id = profetionnal.Id,
+                    Business_name = profetionnal.BusinessName,
+                    Description = profetionnal.Description,
+                    address = profetionnal.Address,
+                    City = profetionnal.City,
+                    Status = profetionnal.Status.ToString(),
+                    Phone = profetionnal.Phone,
+                    ProfileImage = profetionnal.ProfileImage,
+                    CategoryName = profetionnal.Category != null ? profetionnal.Category.Name : null,
+                    UserEmail = profetionnal.User.Email,
+                    UserName = profetionnal.User.UserName,
+                    UserPhone = profetionnal.User.PhoneNumber,
+                    TitleService = profetionnal.Services.FirstOrDefault()?.Title ?? "No services",
+                    ServicePrice = profetionnal.Services.FirstOrDefault()?.Price ?? 0
+                };
+
+               var  services = await _context.Services
+                    .Where(s => s.ProfessionalId == id)
+                    .Select(s => new
+                    {
+                        s.Id,
+                        s.Title,
+                        s.Description,
+                        s.Price,
+                        s.Duration,
+                    })
+                    .ToListAsync();
+
+                var availabilities = await _context.Availabilities
+                    .Where(a => a.ProfessionalId == id)
+                    .Select(a => new
+                    {
+                        a.Id,
+                        a.DayOfWeek,
+                        a.StartTime,
+                        a.EndTime
+                    })
+                    .ToListAsync();
+                return Ok(new {profetionnal = profetionnalDTO ,Services = services , availability = availabilities } );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Internal Server Error",
+                    error = ex.InnerException?.Message ?? ex.Message
+                });
+            }
         }
 
     }

@@ -41,6 +41,7 @@ namespace server.Models
 
         public ICollection<Service> Services { get; set; } = new List<Service>();
         public ICollection<Availability>? Availabilities { get; set; }
+        public ICollection<AbonnementPaiment>? abonnementPaiments { get; set; }
 
     }
 

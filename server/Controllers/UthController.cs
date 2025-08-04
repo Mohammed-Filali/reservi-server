@@ -163,6 +163,7 @@ namespace server.Controllers
                 Phone = user.PhoneNumber,
                 Role = primaryRole
             };
+
             // Prepare DTO to return
             if (primaryRole == "professionnel")
             {
@@ -181,7 +182,7 @@ namespace server.Controllers
 
            
 
-            return Ok(userDto);
+            return Ok(new { user = userDto , id = user.Id });
         }
 
 

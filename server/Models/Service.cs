@@ -25,5 +25,8 @@ namespace server.Models
 
       
         public Profetionnal Professional { get; set; }
+
+        public ICollection<Reservation>? Reservations { get; set; }
+
     }
 }

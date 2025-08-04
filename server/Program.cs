@@ -4,9 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using server.Data;
 using server.Models;
+using server.Repositories;
+using server.Services;
 using System.Text;
 
+var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+if (!Directory.Exists(wwwrootPath))
+{
+    Directory.CreateDirectory(wwwrootPath);
+}
+
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -60,6 +69,8 @@ builder.Services.AddCors(options =>
 // Register TokenService
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+builder.Services.AddScoped<IAdminServices, AdminServices>();
+
 var app = builder.Build();
 
 // Enable Swagger only in development
@@ -69,6 +80,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
 
 // Middleware order is important
 app.UseCors("AllowFrontend");

@@ -91,6 +91,18 @@
         }
       }
     },
+    "/api/Auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Availabilities/{proID}": {
       "get": {
         "tags": [
@@ -114,14 +126,14 @@
         }
       }
     },
-    "/api/Availabilities/{ID}": {
+    "/api/Availabilities/{id}": {
       "put": {
         "tags": [
           "Availabilities"
         ],
         "parameters": [
           {
-            "name": "ID",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -149,6 +161,27 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Availabilities"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -199,7 +232,29 @@
         }
       }
     },
-    "/api/Profetionnals/store": {
+    "/api/Clients": {
+      "get": {
+        "tags": [
+          "Clients"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Profetionnals": {
+      "get": {
+        "tags": [
+          "Profetionnals"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "post": {
         "tags": [
           "Profetionnals"
@@ -275,75 +330,22 @@
         }
       }
     },
-    "/api/Profetionnals": {
-      "post": {
+    "/api/Profetionnals/{id}": {
+      "get": {
         "tags": [
           "Profetionnals"
         ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "Business_name": {
-                    "type": "string"
-                  },
-                  "Description": {
-                    "type": "string"
-                  },
-                  "address": {
-                    "type": "string"
-                  },
-                  "City": {
-                    "type": "string"
-                  },
-                  "category_id": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "ProfileImage": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              },
-              "encoding": {
-                "id": {
-                  "style": "form"
-                },
-                "user_id": {
-                  "style": "form"
-                },
-                "Business_name": {
-                  "style": "form"
-                },
-                "Description": {
-                  "style": "form"
-                },
-                "address": {
-                  "style": "form"
-                },
-                "City": {
-                  "style": "form"
-                },
-                "category_id": {
-                  "style": "form"
-                },
-                "ProfileImage": {
-                  "style": "form"
-                }
-              }
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -397,6 +399,92 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Services/{ProID}": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "ProID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Services/{id}": {
+      "put": {
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServicesDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServicesDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServicesDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Services"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -466,7 +554,7 @@
             "type": "string",
             "format": "date-span"
           },
-          "professional": {
+          "professionalID": {
             "type": "integer",
             "format": "int32"
           }
