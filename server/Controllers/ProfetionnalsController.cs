@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.DTOS;
+using server.models;
 using server.Models;
 
 namespace server.Controllers
@@ -33,7 +34,7 @@ namespace server.Controllers
                 var profetionnals = await _context.Profetionnals
      .Include(p => p.User)
      .Include(p => p.Category)
-     .Include(p => p.Services)
+     .Include(p => p.services)
      .Select(p => new ProfetionnalDTO
      {
          id = p.Id,
@@ -49,8 +50,8 @@ namespace server.Controllers
          UserEmail = p.User.Email,
          UserName = p.User.UserName,
          UserPhone = p.User.PhoneNumber,
-         TitleService = p.Services.FirstOrDefault() != null ? p.Services.FirstOrDefault().Title : null,
-         ServicePrice = p.Services.FirstOrDefault() != null ? p.Services.FirstOrDefault().Price : 0
+         TitleService = p.services.FirstOrDefault() != null ? p.services.FirstOrDefault().Title : null,
+         ServicePrice = p.services.FirstOrDefault() != null ? p.services.FirstOrDefault().Price : 0
 
 
      })
@@ -108,7 +109,7 @@ namespace server.Controllers
                 }
 
                 // 4. Création de l’objet
-                var profetionnal = new Profetionnal
+                var profetionnal = new models.Profetionnal
                 {
                     BusinessName = profetionnalDTO.Business_name,
                     Address = profetionnalDTO.address,
@@ -156,7 +157,7 @@ namespace server.Controllers
                 var profetionnal = await _context.Profetionnals
                     .Include(p => p.User)
                     .Include(p => p.Category)
-                    .Include(p => p.Services)
+                    .Include(p => p.services)
                     .FirstOrDefaultAsync(p => p.Id == id);
                 if (profetionnal == null)
                 {
@@ -176,8 +177,8 @@ namespace server.Controllers
                     UserEmail = profetionnal.User.Email,
                     UserName = profetionnal.User.UserName,
                     UserPhone = profetionnal.User.PhoneNumber,
-                    TitleService = profetionnal.Services.FirstOrDefault()?.Title ?? "No services",
-                    ServicePrice = profetionnal.Services.FirstOrDefault()?.Price ?? 0
+                    TitleService = profetionnal.services.FirstOrDefault()?.Title ?? "No services",
+                    ServicePrice = profetionnal.services.FirstOrDefault()?.Price ?? 0
                 };
 
                var  services = await _context.Services

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using server.models;
+using System.ComponentModel.DataAnnotations;
 
 namespace server.Models
 {

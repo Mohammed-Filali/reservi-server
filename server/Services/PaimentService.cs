@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using server.Data;
+using server.Models;
 using server.Repositories;
 
 namespace server.Services
@@ -41,6 +42,51 @@ namespace server.Services
             } catch (Exception ex)
             {
                 // Log the exception (ex) as needed
+                return false;
+            }
+        }
+
+        public async Task<bool> isAbonnementPayed(int proId)
+        {
+            try
+            {
+                var now = DateTime.Now;
+
+                var abonnement = await _context.abonnementPaiments
+                    .Include(a => a.Abonnement)
+                    .Where(a => a.ProfetionnalId == proId)
+                    .OrderByDescending(a => a.PaymentDate)
+                    .FirstOrDefaultAsync();
+
+                if (abonnement == null)
+                    return false;
+
+                // Calcul de la date d'expiration
+                DateTime expirationDate = abonnement.PaymentDate;
+                switch (abonnement.Abonnement.DurationUnit?.ToLower())
+                {
+                    case "day":
+                        expirationDate = expirationDate.AddDays(abonnement.Abonnement.DurationValue);
+                        break;
+                    case "month":
+                        expirationDate = expirationDate.AddMonths(abonnement.Abonnement.DurationValue);
+                        break;
+                    case "year":
+                        expirationDate = expirationDate.AddYears(abonnement.Abonnement.DurationValue);
+                        break;
+                }
+
+                // Vérifie le statut et la validité
+                if ((abonnement.Status == AbonnementPaymentStatus.Paid || abonnement.Status == AbonnementPaymentStatus.Pending)
+                    && expirationDate > now)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
                 return false;
             }
         }

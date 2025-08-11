@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using server.Data;
 using server.DTOS;
 using server.Models;
+using server.Repositories;
 
 namespace server.Controllers
 {
@@ -12,10 +13,11 @@ namespace server.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly DB_Connect _context;
-
-        public ReservationsController( DB_Connect context )
+        private readonly IPaimentService _paimentService;
+        public ReservationsController( DB_Connect context  , IPaimentService paimentService)
         {
             _context = context;
+            _paimentService = paimentService;
         }
 
         [HttpPost]
@@ -48,8 +50,7 @@ namespace server.Controllers
                 // Automatically create a payment record for the reservation
                 await _context.SaveChangesAsync();
 
-                var paymentService = new Services.PaimentService(_context);
-                var paymentCreated = await paymentService.defaultPaiment(dto.User, reservation.Id);
+                var paymentCreated = await _paimentService.defaultPaiment(dto.User, reservation.Id);
 
                
                 return Ok(new
@@ -217,6 +218,40 @@ namespace server.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error updating reservation status: {ex.Message}");
             }
 
+        }
+
+        [HttpGet("Admin")]
+        public async Task<IActionResult> GetReservations()
+        {
+            try
+            {
+                var reservations = await _context.Reservations
+                    .Include(r => r.Service)
+                    .Include(r => r.User)
+                    .Select(reservation => new
+                    {
+                        reservation.Id,
+                        reservation.Date,
+                        reservation.StartTime,
+                        status = reservation.Status.ToString(),
+                        reservation.Service.Professional.BusinessName,
+                        reservation.Service.Professional.Address,
+                        reservation.Service.Title,
+                        reservation.Service.Duration,
+                        reservation.Service.Price,
+                        reservation.UserId,
+                        reservation.User.UserName,
+                        paymenStatus = reservation.Paiment != null ? reservation.Paiment.Status.ToString() : null,
+                        paymentID = reservation.Paiment != null ? reservation.Paiment.Id : (int?)null
+                    })
+                    .ToListAsync();
+
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving reservation: {ex.Message}");
+            }
         }
     }
 

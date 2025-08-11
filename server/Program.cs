@@ -71,6 +71,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<IAdminServices, AdminServices>();
 
+builder.Services.AddScoped<IPaimentService, PaimentService>();
+
+
 var app = builder.Build();
 
 // Enable Swagger only in development

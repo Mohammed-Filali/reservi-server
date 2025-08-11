@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using server.Data;
+using server.Models;
 using server.Repositories;
 
 namespace server.Services
@@ -46,7 +47,61 @@ namespace server.Services
             }
         }
 
+        public async Task<int> ReservationsCountThisMonth()
+        {
+            var now = DateOnly.FromDateTime(DateTime.Now);
+            var firstDay = new DateOnly(now.Year, now.Month, 1);
+            var lastDay = firstDay.AddMonths(1).AddDays(-1);
 
+            return await _context.Reservations
+                .Where(r => r.Date >= firstDay && r.Date <= lastDay && r.Status == ReservationStatus.Confirmed)
+                .CountAsync();
+        }
+
+        public async Task<decimal> TotalRevenue()
+        {
+            try
+            {
+                return await _context.abonnementPaiments
+                    .Where(p => p.Status == AbonnementPaymentStatus.Paid)
+                    .SumAsync(p => p.Amount);
+            }
+            catch
+            {
+                return 0;
+            }
+
+        }
+
+
+        public async Task<int> PendingPayment ()
+        {
+            try
+            {
+                return await _context.abonnementPaiments
+                    .Where(p => p.Status == AbonnementPaymentStatus.Pending)
+                    .CountAsync();
+            }
+            catch
+            {
+                return 0;
+            }
+
+        }
+        public async Task<int> CancelingPayment()
+        {
+            try
+            {
+                return await _context.abonnementPaiments
+                    .Where(p => p.Status == AbonnementPaymentStatus.Cancelled)
+                    .CountAsync();
+            }
+            catch
+            {
+                return 0;
+            }
+
+        }
 
     }
 }

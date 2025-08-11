@@ -29,10 +29,20 @@ namespace server.Controllers
             {
                 var profetionnals = await _adminServices.ProfetionnalsCount();
                 var clients = await _adminServices.ClientsCount();
+                var reservation = await _adminServices.ReservationsCountThisMonth();
+                var cancelingPayment = await _adminServices.CancelingPayment();
+                var pendingPayment = await _adminServices.PendingPayment();
+                var totalRevenue = await _adminServices.TotalRevenue();
+
                 return Ok(new
                 {
                     ProfetionnalsCount = profetionnals,
-                    ClientsCount = clients
+                    ClientsCount = clients,
+                    ReservationCount = reservation,
+                    CancelingPayment = cancelingPayment,
+                    PendingPayment = pendingPayment,
+                    TotalRevenue = totalRevenue
+
                 });
             }
             catch (Exception ex)

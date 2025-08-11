@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using server.models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace server.Models
@@ -19,7 +20,7 @@ namespace server.Models
         public AbonnementPaymentStatus Status { get; set; } = AbonnementPaymentStatus.Pending; // Default status
 
         [ForeignKey("ProfetionnalId")]
-        public string ProfetionnalId { get; set; } // Foreign key to Professional
+        public int ProfetionnalId { get; set; } // Foreign key to Professional
         // Navigation property
         public Profetionnal? Profetionnal { get; set; }
 
@@ -30,6 +31,14 @@ namespace server.Models
         public DateOnly updated_at { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
         public DateOnly created_at { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+
+
+        [ForeignKey("AbonnementId")]
+        public int AbonnementId { get; set; } // Foreign key to Professional
+
+        public Abonnements? Abonnement { get; set; }
+
+        
     }
     public enum AbonnementPaymentStatus
     {

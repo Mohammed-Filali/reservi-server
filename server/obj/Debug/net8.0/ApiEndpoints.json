@@ -1,5 +1,67 @@
 [
   {
+    "ContainingType": "server.Controllers.AbonnementController",
+    "Method": "GetAbonnementPaimentsByProfetionnalId",
+    "RelativePath": "api/Abonnement",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.AbonnementController",
+    "Method": "NewAbonnement",
+    "RelativePath": "api/Abonnement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "server.DTOS.AbonnementDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.AbonnementController",
+    "Method": "GetAbonnementPaiments",
+    "RelativePath": "api/Abonnement/paiments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.AbonnementController",
+    "Method": "NewAbonnementPaiment",
+    "RelativePath": "api/Abonnement/paiments",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "server.DTOS.AbonenmtPaimentDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.AdminController",
+    "Method": "AdminDashboard",
+    "RelativePath": "api/Admin/dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "server.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/Auth/login",
@@ -151,6 +213,37 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "server.Controllers.PaimentsController",
+    "Method": "GetPaiments",
+    "RelativePath": "api/Paiments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.PaimentsController",
+    "Method": "CreatePaiments",
+    "RelativePath": "api/Paiments/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "server.DTOS.PaimentDTO",
+        "IsRequired": true
+      },
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "server.Controllers.ProfetionnalsController",
     "Method": "GetAll",
     "RelativePath": "api/Profetionnals",
@@ -215,6 +308,101 @@
     "ContainingType": "server.Controllers.ProfetionnalsController",
     "Method": "GetById",
     "RelativePath": "api/Profetionnals/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.ReservationsController",
+    "Method": "CreateReservation",
+    "RelativePath": "api/Reservations",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "server.DTOS.ReservationDTOS",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.ReservationsController",
+    "Method": "GetReservationById",
+    "RelativePath": "api/Reservations/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.ReservationsController",
+    "Method": "updateStatus",
+    "RelativePath": "api/Reservations/{status}/{id}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.ReservationsController",
+    "Method": "GetReservations",
+    "RelativePath": "api/Reservations/Admin",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.ReservationsController",
+    "Method": "GetReservationsByClient",
+    "RelativePath": "api/Reservations/client/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "server.Controllers.ReservationsController",
+    "Method": "GetReservationsByPro",
+    "RelativePath": "api/Reservations/Pro/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

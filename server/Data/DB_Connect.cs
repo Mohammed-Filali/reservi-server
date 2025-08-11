@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using server.models;
 using server.Models;
 
 namespace server.Data
@@ -20,6 +21,9 @@ namespace server.Data
         public DbSet<Paiment> Paiments { get; set; } // Add your Rating DbSet
 
         public DbSet<AbonnementPaiment> abonnementPaiments {get ; set;}
+
+        public DbSet<Abonnements> Abonnements { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -61,12 +65,12 @@ namespace server.Data
             .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Profetionnal>()
-            .HasMany(p => p.Services)
+            .HasMany(p => p.services)
             .WithOne(c => c.Professional)
             .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Profetionnal>()
-            .HasMany(p => p.Availabilities)
+            .HasMany(p => p.availabilities)
             .WithOne(c => c.profetionnal)
             .OnDelete(DeleteBehavior.SetNull);
 
@@ -84,15 +88,11 @@ namespace server.Data
 
             modelBuilder.Entity<Service>()
              .HasOne(s => s.Professional)
-             .WithMany(p => p.Services)
+             .WithMany(p => p.services)
              .HasForeignKey(s => s.ProfessionalId)
             .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Service>()
-           .HasOne(s => s.Professional)
-           .WithMany(p => p.Services)
-           .HasForeignKey(s => s.ProfessionalId)
-          .OnDelete(DeleteBehavior.Cascade);
+            
 
 
             modelBuilder.Entity<Service>()
@@ -108,7 +108,7 @@ namespace server.Data
 
             modelBuilder.Entity<Availability>()
              .HasOne(s => s.profetionnal)
-             .WithMany(p => p.Availabilities)
+             .WithMany(p => p.availabilities)
              .HasForeignKey(s => s.ProfessionalId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -162,6 +162,16 @@ namespace server.Data
                 .WithMany(p => p.abonnementPaiments)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<AbonnementPaiment>()
+                .HasOne(a => a.Abonnement)
+                .WithMany(p => p.abonnementPaiments)
+                .OnDelete(DeleteBehavior.SetNull);
+
+
+            modelBuilder.Entity<Abonnements>()
+                .HasMany(a => a.abonnementPaiments)
+                .WithOne(p => p.Abonnement)
+                .OnDelete(DeleteBehavior.SetNull);
 
 
         }

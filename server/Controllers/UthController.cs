@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using server.Data; // Your DbContext namespace
 using server.DTOS;
 using server.Models;
+using server.Repositories;
 using System.Security.Claims;
 
 namespace server.Controllers
@@ -17,7 +18,7 @@ namespace server.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
-
+        private readonly IPaimentService _paimentService;
         private readonly DB_Connect _context;
 
         public AuthController(
@@ -25,7 +26,8 @@ namespace server.Controllers
             RoleManager<IdentityRole> roleManager,
             DB_Connect context,            
             ITokenService tokenService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IPaimentService paimentService
             )
         {
             _configuration = configuration;
@@ -33,6 +35,7 @@ namespace server.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
             _context = context;
+            _paimentService = paimentService;
         }
 
         [HttpPost("register")]
@@ -129,7 +132,21 @@ namespace server.Controllers
                 Phone = user.PhoneNumber,
                 Role = primaryRole
             };
-
+            if (primaryRole == "professionnel")
+            {
+                int pro = _context.Profetionnals
+                    .Where(p => p.UserId == user.Id)
+                    .Select(p =>  p.Id)
+                    .FirstOrDefault();
+                bool isAbonnementPayed = await _paimentService.isAbonnementPayed(pro);
+                return Ok(new
+                {
+                    user = data,
+                    Token = token,
+                    ExpiresAt = expiresAt,
+                     isAbonnementPayed
+                });
+            }
             return Ok(new
             {
                 user = data,
@@ -168,6 +185,7 @@ namespace server.Controllers
             if (primaryRole == "professionnel")
             {
                 var profetionnale =   _context.Profetionnals.Where(p=> p.UserId == user.Id).FirstOrDefault();
+                bool isAbonnementPayed = await _paimentService.isAbonnementPayed(profetionnale.Id);
                 var pro = new ProfetionnalDTO
                 {
                     id = profetionnale.Id,
@@ -175,15 +193,18 @@ namespace server.Controllers
                     Business_name = profetionnale.BusinessName,
                     City = profetionnale.City,
                     Description = profetionnale.Description,
+                    
 
                 };
-                return Ok(new{ user = userDto , profetionnal =pro });
+                return Ok(new{ user = userDto , profetionnal =pro , isAbonnementPayed });
             }
 
            
 
             return Ok(new { user = userDto , id = user.Id });
         }
+
+
 
 
         [HttpPost("logout")]

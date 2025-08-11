@@ -163,6 +163,13 @@ namespace server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AbonnementId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("AbonnementId1")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
@@ -197,9 +204,50 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AbonnementId1");
+
                     b.HasIndex("ProfetionnalId1");
 
                     b.ToTable("abonnementPaiments");
+                });
+
+            modelBuilder.Entity("server.Models.Abonnements", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DurationUnit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DurationValue")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Abonnements");
                 });
 
             modelBuilder.Entity("server.Models.ApplicationUser", b =>
@@ -365,55 +413,6 @@ namespace server.Migrations
                     b.ToTable("Paiments");
                 });
 
-            modelBuilder.Entity("server.Models.Profetionnal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BusinessName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProfileImage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Profetionnals");
-                });
-
             modelBuilder.Entity("server.Models.Reservation", b =>
                 {
                     b.Property<int>("Id")
@@ -480,6 +479,55 @@ namespace server.Migrations
                     b.ToTable("Services");
                 });
 
+            modelBuilder.Entity("server.models.Profetionnal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BusinessName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfileImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Profetionnals");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -533,18 +581,25 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.Models.AbonnementPaiment", b =>
                 {
-                    b.HasOne("server.Models.Profetionnal", "Profetionnal")
+                    b.HasOne("server.Models.Abonnements", "Abonnement")
+                        .WithMany("abonnementPaiments")
+                        .HasForeignKey("AbonnementId1")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("server.models.Profetionnal", "Profetionnal")
                         .WithMany("abonnementPaiments")
                         .HasForeignKey("ProfetionnalId1")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Abonnement");
 
                     b.Navigation("Profetionnal");
                 });
 
             modelBuilder.Entity("server.Models.Availability", b =>
                 {
-                    b.HasOne("server.Models.Profetionnal", "profetionnal")
-                        .WithMany("Availabilities")
+                    b.HasOne("server.models.Profetionnal", "profetionnal")
+                        .WithMany("availabilities")
                         .HasForeignKey("ProfessionalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -571,24 +626,6 @@ namespace server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("server.Models.Profetionnal", b =>
-                {
-                    b.HasOne("server.Models.Categorie", "Category")
-                        .WithMany("Profetionnals")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("server.Models.ApplicationUser", "User")
-                        .WithOne("Profetionnal")
-                        .HasForeignKey("server.Models.Profetionnal", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("server.Models.Reservation", b =>
                 {
                     b.HasOne("server.Models.Service", "Service")
@@ -610,13 +647,36 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.Models.Service", b =>
                 {
-                    b.HasOne("server.Models.Profetionnal", "Professional")
-                        .WithMany("Services")
+                    b.HasOne("server.models.Profetionnal", "Professional")
+                        .WithMany("services")
                         .HasForeignKey("ProfessionalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Professional");
+                });
+
+            modelBuilder.Entity("server.models.Profetionnal", b =>
+                {
+                    b.HasOne("server.Models.Categorie", "Category")
+                        .WithMany("Profetionnals")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("server.Models.ApplicationUser", "User")
+                        .WithOne("Profetionnal")
+                        .HasForeignKey("server.models.Profetionnal", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("server.Models.Abonnements", b =>
+                {
+                    b.Navigation("abonnementPaiments");
                 });
 
             modelBuilder.Entity("server.Models.ApplicationUser", b =>
@@ -633,15 +693,6 @@ namespace server.Migrations
                     b.Navigation("Profetionnals");
                 });
 
-            modelBuilder.Entity("server.Models.Profetionnal", b =>
-                {
-                    b.Navigation("Availabilities");
-
-                    b.Navigation("Services");
-
-                    b.Navigation("abonnementPaiments");
-                });
-
             modelBuilder.Entity("server.Models.Reservation", b =>
                 {
                     b.Navigation("Paiment")
@@ -651,6 +702,15 @@ namespace server.Migrations
             modelBuilder.Entity("server.Models.Service", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("server.models.Profetionnal", b =>
+                {
+                    b.Navigation("abonnementPaiments");
+
+                    b.Navigation("availabilities");
+
+                    b.Navigation("services");
                 });
 #pragma warning restore 612, 618
         }

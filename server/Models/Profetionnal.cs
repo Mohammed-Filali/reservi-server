@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using server.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace server.Models
+namespace server.models
 {
     public class Profetionnal
     {
@@ -9,49 +10,48 @@ namespace server.Models
         public int Id { get; set; }
 
         [Required]
-        [ForeignKey("User")]
-        public string UserId { get; set; } = null!;  // Assuming ApplicationUser.Id is string (Identity default)
+        public string UserId { get; set; }
 
         [Required]
-        public string BusinessName { get; set; } = null!;
+        public string BusinessName { get; set; }
 
         public string? Description { get; set; }
 
         [Required]
-        public string Address { get; set; } = null!;
+        public string Address { get; set; }
 
         [Required]
-        public string City { get; set; } = null!;
+        public string City { get; set; }
 
         public string? ProfileImage { get; set; }
 
         [Required]
-        [EnumDataType(typeof(ProfetionnalStatus))]
-        public ProfetionnalStatus Status { get; set; } = ProfetionnalStatus.Active;
+        public ProfetionnalStatus Status { get; set; } = ProfetionnalStatus.Pending; // Default status
 
         public string? Phone { get; set; }
 
-        // Navigation property to the user
-        public ApplicationUser User { get; set; } = null!;
-
         public int? CategoryId { get; set; }
 
-        // Navigation property
+        // Relations (optionnel, à adapter selon vos besoins)
+        [ForeignKey("UserId")]
+        public ApplicationUser? User { get; set; }
+
+        [ForeignKey("CategoryId")]
         public Categorie? Category { get; set; }
 
-        public ICollection<Service> Services { get; set; } = new List<Service>();
-        public ICollection<Availability>? Availabilities { get; set; }
-        public ICollection<AbonnementPaiment>? abonnementPaiments { get; set; }
+        public ICollection<Service>? services { get; set; }   
+        
+        public ICollection<Availability>? availabilities { get; set; }
+
+        public ICollection<AbonnementPaiment>?  abonnementPaiments { get; set; }
+
 
     }
 
     public enum ProfetionnalStatus
     {
-        Pending,
-        Active,
-        Blocked
+        Pending ,
+        Active  ,
+        Rejected ,
     }
-
-
 }
-
