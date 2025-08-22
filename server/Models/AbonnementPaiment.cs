@@ -1,6 +1,7 @@
 ﻿using server.models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace server.Models
 {
@@ -34,11 +35,12 @@ namespace server.Models
 
 
         [ForeignKey("AbonnementId")]
-        public int AbonnementId { get; set; } // Foreign key to Professional
+        public int? AbonnementId { get; set; } // Nullable int
+        [JsonIgnore]
 
         public Abonnements? Abonnement { get; set; }
 
-        
+
     }
     public enum AbonnementPaymentStatus
     {

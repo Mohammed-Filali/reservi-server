@@ -165,6 +165,7 @@ namespace server.Data
             modelBuilder.Entity<AbonnementPaiment>()
                 .HasOne(a => a.Abonnement)
                 .WithMany(p => p.abonnementPaiments)
+                .HasForeignKey(foreignKeyExpression => foreignKeyExpression.AbonnementId)
                 .OnDelete(DeleteBehavior.SetNull);
 
 

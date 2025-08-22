@@ -193,7 +193,8 @@ namespace server.Controllers
                     Business_name = profetionnale.BusinessName,
                     City = profetionnale.City,
                     Description = profetionnale.Description,
-                    
+                    ProfileImage = profetionnale.ProfileImage,
+
 
                 };
                 return Ok(new{ user = userDto , profetionnal =pro , isAbonnementPayed });

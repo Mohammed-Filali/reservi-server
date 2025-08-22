@@ -58,8 +58,7 @@ namespace server.Services
                     .OrderByDescending(a => a.PaymentDate)
                     .FirstOrDefaultAsync();
 
-                if (abonnement == null)
-                    return false;
+              
 
                 // Calcul de la date d'expiration
                 DateTime expirationDate = abonnement.PaymentDate;

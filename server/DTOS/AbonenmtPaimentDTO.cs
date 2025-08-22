@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace server.DTOS
 {
@@ -18,6 +19,7 @@ namespace server.DTOS
         public string? Currency { get; set; } = "MAD"; // Default currency
 
         public int AbonnementId { get; set; } // Foreign key to Professional
+
 
         public PaymentDetailsDto paymentDetails { get; set; } // This can be used to store additional payment details if needed
     }

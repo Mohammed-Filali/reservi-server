@@ -24,8 +24,10 @@ namespace server.Controllers
         {
             try
             {
+
                 var paiments = await _context.abonnementPaiments
                     .Include(p => p.Profetionnal)
+                    .Include(p => p.Abonnement)
                     .Select(p => new
                     {
                         p.Id,
@@ -34,10 +36,14 @@ namespace server.Controllers
                         p.PaymentDate,
                         p.Profetionnal.BusinessName,
                         p.Profetionnal.ProfileImage,
-                        p.Profetionnal.User.UserName,
-                        p.ProfetionnalId
-                    }).ToListAsync();
-                ;
+                        UserName = p.Profetionnal.User.UserName ,
+                        p.ProfetionnalId,
+                        p.TransactionId,
+                        p.Abonnement.Name
+                    })
+                    .ToListAsync();
+
+                
                 return Ok(paiments);
             }
             catch (Exception ex)
@@ -97,7 +103,7 @@ namespace server.Controllers
         {
             try
             {
-                if (dto.Amount <= 0 || string.IsNullOrEmpty(dto.PaymentMethod) || dto.ProfetionnalId <= 0 || dto.AbonnementId != 0)
+                if (dto.Amount <= 0 || string.IsNullOrEmpty(dto.PaymentMethod) || dto.ProfetionnalId <= 0 || dto.AbonnementId <= 0)
                 {
                     return BadRequest("Invalid payment data provided.");
                 }

@@ -1,4 +1,6 @@
-﻿namespace server.Models
+﻿using System.Text.Json.Serialization;
+
+namespace server.Models
 {
     public class Abonnements
     {
@@ -11,6 +13,8 @@
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        [JsonIgnore]
+
         public ICollection<AbonnementPaiment>? abonnementPaiments { get; set; }
     }
 }
